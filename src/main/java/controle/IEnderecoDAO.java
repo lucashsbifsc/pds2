@@ -10,7 +10,7 @@ public interface IEnderecoDAO {
 
 	public ArrayList<Endereco> listarEnderecos();
 
-	public boolean atualizarEndereco(Endereco end);
+	public int atualizarEndereco(Endereco end);
 
 	public boolean removerEndereco(Endereco end);
 

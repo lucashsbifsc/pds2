@@ -148,21 +148,72 @@ public class EnderecoDAO implements IEnderecoDAO {
 
 		return enderecos;
 	}
+	
+	
+	/**
+	 * Tem que possuir a chave primária (ID, CPF, CEP, etc.)
+	 * 
+	 * Atualiza um registro existente no banco d dados.
+	 * 
+	 * O objeto passado como parâmetro já deve possuir os NOVOS valores
+	 * porém deve possuir a chave primária do registro que se deseja atualizar.
+	 */
+	public int atualizarEndereco(Endereco end) {
+		// Comando SQL a ser executado
+		String SQL = "UPDATE enderecos SET rua = ? WHERE cep = ?";
+		
+		// Instancia a conexão
+		Conexao con = Conexao.getInstancia();
+		// Cria uma "ponte de conexão" com o banco de dados
+		Connection conBD = con.conectar();
+		// Define o retorno como 0 (falso)
+		int retorno = 0;
+		
+		try {
+			// Cria um objeto Java para receber os valores do SQL
+			PreparedStatement ps = conBD.prepareStatement(SQL);
+			
+			// Pega os valores e coloca em cada interrogação do comando SQL como parâmetro
+			ps.setString(1, end.getRua());
+			ps.setString(2, end.getCep());
+			
+			// Executa o comando SQL
+			retorno = ps.executeUpdate();
+			
+		} catch (SQLException e) {
+			// Envia um erro caso o try seja executado com falhas
+			e.printStackTrace();
+		} finally {
+			// Fecha a conexão com o bando de dados // É uma boa prática
+			con.fecharConexao();
+		}
+		
+		return retorno; // (retorno == 0 ? false : true) // IF Ternário (Operador Condicional Ternário)
+	}
 
-	public boolean atualizarEndereco(Endereco end) {
-		String SQL = "UPDATE";
+	public boolean removerEndereco(Endereco end) {
+		String SQL = "DELETE FROM enderecos WHERE cep = ?";
 		
 		Conexao con = Conexao.getInstancia();
 		Connection conBD = con.conectar();
 		
-		PreparedStatement ps = conBD.prepareStatement(SQL);
+		int retorno = 0;
 		
-		return false;
-	}
-
-	public boolean removerEndereco(Endereco end) {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			PreparedStatement ps = conBD.prepareStatement(SQL);
+			
+			ps.setString(1, end.getCep());
+			
+			retorno = ps.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			con.fecharConexao();
+		}
+		
+		
+		return (retorno == 0 ? false : true);
 	}
 
 	public Endereco buscarEnderecoPorCep(int cep) {
